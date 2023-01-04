@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization 1 Exercise</title>
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- include d3 -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- include jQueryUI -->
+    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+    <!-- include Vis1 script -->
+    <script src="vis1.js"></script>
+
+</head>
+
+<!-- call init function when page has loaded -->
+<body onload="init()">
+
+<h1>Vis1 d3 Exercise</h1>
+
+<!-- data selector -->
+<p>Select your data here: <input id="upload" type="file"></p>
+
+<!-- scatterplot -->
+<div class="container">
+    <!-- scatterplot menu -->
+    <h2>Scatterplot</h2>
+    <p>Select dimensions to be displayed here: </p>
+    <div id="menu">
+        <form action="#">
+            <fieldset>
+                <label for="scatterX">x axis: </label>
+                <select name="scatterX" id="scatterX">
+                </select>
+                <br/>
+                <label for="scatterY">y axis: </label>
+                <select name="scatterY" id="scatterY">
+                </select>
+                <br/>
+                <label for="size">size: </label>
+                <select name="size" id="size">
+                </select>
+            </fieldset>
+        </form>
+    </div>
+    <!-- scatterplot SVG -->
+    <div id="sp"></div>
+</div>
+
+<!-- radar chart -->
+<div class="container">
+    <h2>Radar Chart</h2>
+    <!-- radar chart SVG -->
+    <div id="radar"></div>
+    <div id="legend">
+        <b>Legend:</b><br/>
+    </div>
+</div>
+
+<!-- credits -->
+<div id="credits">
+    Created by
+    <div class="instructions">Jan Pfeifer und Julian Wollersberger</div>
+    for the Vis 1 Lecture at <a href="https://www.fim.uni-passau.de/digitale-bildverarbeitung"> Faculty of Computer
+    Science and Mathematics - Chair of Cognitive sensor systems - University of Passau</a>.
+</div>
+</body>
+</html>

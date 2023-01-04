@@ -1,0 +1,7 @@
+{
+  "name": "vis1exercise2_2022_framework",
+  "version": "1.0.0",
+  "dependencies": {
+    "d3-dsv": "^3.0.1"
+  }
+}
