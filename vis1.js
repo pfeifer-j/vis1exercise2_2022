@@ -36,9 +36,11 @@ let parsedData;
 // true if the data loaded was loaded
 let dataLoaded = false;
 // used to adjust the max values
-let maxPuffer = 1.05
+let maxPuffer = 1.10
 // used to adjust the min values
-let minPuffer = 0.95
+let minPuffer = 0.90
+// max number on entries in legend
+let maxNumberOfEntriesInLegend = 5;
 
 // create the base of the page
 function init() {
@@ -344,7 +346,7 @@ function renderPlots() {
 
 // adds events onto the dots
 function addEventsToDots() {
-    let div = d3.select("body").append("div")
+    let tooltip = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
 
@@ -355,7 +357,7 @@ function addEventsToDots() {
                 .style("fill-opacity", 1)
 
             // show tooltip
-            div.transition()
+            tooltip.transition()
                 .duration(100)
                 .style("opacity", 1);
 
@@ -374,7 +376,7 @@ function addEventsToDots() {
                 }
             }
             if (content !== undefined) {
-                // format content
+                // format the content of the tooltip
                 content = JSON.stringify(content)
                     .replace(/[{}",:]/g, function (match) {
                         if (match === ',') return '<br>';
@@ -384,12 +386,14 @@ function addEventsToDots() {
             }
 
             // add content to the tooltips
-            div.html(content)
+            tooltip.html(content)
                 .style("left", (this.getBoundingClientRect().x + 10) + "px")
                 .style("top", (this.getBoundingClientRect().y - 15) + "px");
 
         })
         .on('mouseout', function () {
+
+            // if the dot is not selected, revert changes on mouseout
             if (!d3.select(this).classed("selected")) {
                 d3.select(this).transition()
                     .duration('200')
@@ -397,8 +401,8 @@ function addEventsToDots() {
                     .style("fill-opacity", 0.5)
             }
 
-            // hide tool-tip
-            div.transition()
+            // hide tooltip on mouseout
+            tooltip.transition()
                 .duration('200')
                 .style("opacity", 0);
         })
@@ -407,22 +411,12 @@ function addEventsToDots() {
             let name = Object.values(data)[0];
             let csvID = Object.values(data)[Object.values(data).length - 1]
             let isSelected = d3.select(this).classed("selected");
-            let maxNumberOfEntriesInLegend = 5;
-            let legendCount = d3.select("#legend").selectAll("div").size();
+            let entriesInLegend = d3.select("#legend").selectAll("div").size();
 
+            // select or unselect dot.
             if (isSelected) {
-                // unselect in scatterplot
-                d3.select(this).classed("selected", false).transition().duration('200').style("fill", 'black').style("fill-opacity", 0.5);
-
-                // unselect in radar chart
-                removeRadarPath(csvID);
-
-                // unselect in legend
-                d3.select("#legend").selectAll("div")
-                    .filter(function () {
-                        return d3.select(this).html().includes(csvID);
-                    }).remove();
-            } else if (legendCount < maxNumberOfEntriesInLegend) {
+                removeSelection(csvID);
+            } else if (entriesInLegend < maxNumberOfEntriesInLegend) {
                 let nextColor = getNextAvailableColor()
 
                 // select in scatterplot
@@ -440,12 +434,15 @@ function addEventsToDots() {
 }
 
 // unselects a selected item
-function removeSelection() {
-    // get the csvID from the clicked button
-    csvID = event.target.getAttribute("csvID");
+function removeSelection(csvID) {
+
+    // get csvID from target
+    if (csvID === undefined) {
+        csvID = event.target.getAttribute("csvID")
+    }
 
     // unselect in scatterplot
-    scatter.selectAll("[csvID='" + csvID + "']").classed("selected", false).style("fill", 'black').style("fill-opacity", 0.5);
+    scatter.selectAll("[csvID='" + csvID + "']").classed("selected", false).transition().duration('200').style("fill", 'black').style("fill-opacity", 0.5);
 
     // unselect in radar chart
     removeRadarPath(csvID);
@@ -453,13 +450,13 @@ function removeSelection() {
     // unselect in legend
     d3.select("#legend").selectAll("div")
         .filter(function () {
-            return d3.select(this).html().includes(csvID); // TODO check this line
+            return d3.select(this).html().includes("\"" + csvID + "\"");
         }).remove();
 }
 
 // returns the next available color of the colors-array
 function getNextAvailableColor() {
-    // the available colors are: violet, green, orange, red, blue
+    // the available five colors are: violet, green, orange, red, blue
     let colors = ["rgb(138, 43, 226)", "rgb(0, 128, 0)", "rgb(255, 165, 0)", "rgb(255, 0, 0)", "rgb(0, 0, 255)"];
 
     // get all colors in use
